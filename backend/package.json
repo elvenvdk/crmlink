@@ -1,0 +1,21 @@
+{
+  "name": "anokocrm_backend",
+  "version": "1.0.0",
+  "description": "Backend REST api for Anoko crm application",
+  "main": "index.js",
+  "repository": "https://github.com/elvenvdk/crmlink",
+  "author": "AvdK",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^1.19.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
+    "crypto-js": "^3.1.9-1",
+    "express": "^4.16.4",
+    "pg": "^7.10.0",
+    "uuid": "^3.3.2"
+  }
+}
