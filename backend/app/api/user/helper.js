@@ -1,21 +1,15 @@
-const SHA256 = require('crypto-js/sha256');
+const Session = require('../../user/session');
+const UserTable = require('../../user/table');
+const { hash } = require('../../user/helper');
 
-const { APP_SECRET } = require('../../secrets');
-const Session = require('./session');
-const UserTable = require('../user/table');
-
-// create string hash
-const hash = str => SHA256(`${APP_SECRET}${str}${APP_SECRET}`).toString();
-
-// set session
 const setSession = ({ username, res, sessionId }) => {
   return new Promise((resolve, reject) => {
     let session, sessionString;
 
     if (sessionId) {
-      sessionString = Session.sessionString({ username, id: sessionId });
+      sessionString = Sesison.sessionString({ username, id: sessionId });
 
-      setSessionCookie({ sessionString });
+      setSessionCookie({ sessionString, res });
 
       resolve({ message: 'Session restored' });
     } else {
@@ -28,27 +22,25 @@ const setSession = ({ username, res, sessionId }) => {
       })
         .then(() => {
           setSessionCookie({ sessionString, res });
-          resolve({ message: 'Session created' });
+          resolve({ message: 'Session was created ' });
         })
         .catch(error => reject(error));
     }
   });
 };
 
-// set session cookies
 const setSessionCookie = ({ sessionString, res }) => {
   res.cookie('sessionString', sessionString, {
     expire: Date.now() + 3600000,
     httpOnly: true
-    // secure: true / Should be used with HTTPS (make sure to setup)
+    // secure: true / should be used with HTTPS (make sure to set up)
   });
 };
 
-// create authenticated account
 const authenticatedUser = ({ sessionString }) => {
   return new Promise((resolve, reject) => {
     if (!sessionString || !Session.verify(sessionString)) {
-      const error = new Error('Invalid Session');
+      const error = new Error('Invalid session');
 
       error.statusCode = 400;
 
@@ -58,13 +50,13 @@ const authenticatedUser = ({ sessionString }) => {
 
       UserTable.getUser({ usernameHash: hash(username) })
         .then(({ user }) => {
-          const authenticated = user.session_id === id;
+          const authenticated = user.session_id == id;
 
-          resolve({ user, authenticated });
+          resolve({ account, authenticated });
         })
         .catch(error => reject(error));
     }
   });
 };
 
-module.exports = { hash, setSession, authenticatedUser };
+module.exports = { setSession, authenticatedUser };

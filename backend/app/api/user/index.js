@@ -1,7 +1,8 @@
 const { Router } = require('express');
 const UserTable = require('../../user/table');
-const Session = require('../../auth/session');
-const { hash, setSession, authenticatedUser } = require('../../auth/helper');
+const Session = require('../../user/session');
+const { setSession, authenticatedUser } = require('./helper');
+const { hash } = require('../../user/helper');
 
 const router = Router();
 
