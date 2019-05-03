@@ -32,25 +32,19 @@ class Session {
   // convert username and id into sessionString
   toString() {
     const { username, id } = this;
-    console.log(
-      'toString sessionSTring',
-      Session.sessionString({ username, id })
-    );
+
     return Session.sessionString({ username, id });
   }
 
   // combine username and id as userData
   static userData({ username, id }) {
-    console.log(`userData: ${username}${SEPARATOR}${id}`);
     return `${username}${SEPARATOR}${id}`;
   }
 
   // create a session string
   static sessionString({ username, id }) {
     const userData = Session.userData({ username, id });
-    console.log(
-      `from session string.. ${userData}${SEPARATOR}${hash(userData)}`
-    );
+
     return `${userData}${SEPARATOR}${hash(userData)}`;
   }
 }

@@ -1,13 +1,14 @@
-const Session = require('../../user/session');
-const UserTable = require('../../user/table');
-const { hash } = require('../../user/helper');
+const Session = require('../../../user/session');
+const UserTable = require('../../../user/table');
+const { hash } = require('../../../user/helper');
 
-const setSession = ({ username, res, sessionId }) => {
+const setSession = ({ username, res, session_id }) => {
+  console.log('setSession Check', { username, session_id });
   return new Promise((resolve, reject) => {
     let session, sessionString;
 
-    if (sessionId) {
-      sessionString = Sesison.sessionString({ username, id: sessionId });
+    if (session_id) {
+      sessionString = Session.sessionString({ username, id: session_id });
 
       setSessionCookie({ sessionString, res });
 
