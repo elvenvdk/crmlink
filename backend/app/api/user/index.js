@@ -66,4 +66,13 @@ router.get('/logout', (req, res, next) => {
     .catch(error => next(error));
 });
 
+// Authenticated
+router.get('/authenticated', (req, res, next) => {
+  const { sessionString } = req.cookies;
+
+  authenticatedUser({ sessionString: req.cookies.sessionString })
+    .then(({ authenticated }) => res.json({ authenticated }))
+    .catch(error => next(error));
+});
+
 module.exports = router;
