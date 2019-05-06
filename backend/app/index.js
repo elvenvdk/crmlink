@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const { errHandler } = require('./helper');
-const { authToken } = require('../bin/authToken/authToken');
+const authToken = require('../bin/authToken/authToken');
 
 const userRouter = require('./api/user');
 
@@ -18,6 +18,7 @@ app.use('/user', userRouter);
 
 app.use(errHandler);
 
-authToken();
+authToken.generateAuthtoken();
+authToken.refreshAuthToken();
 
 module.exports = app;
