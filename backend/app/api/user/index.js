@@ -36,10 +36,8 @@ router.post('/login', (req, res, next) => {
   const { username, password } = req.body;
   UserTable.getUser({ usernameHash: hash(username) })
     .then(({ user }) => {
-      console.log('user', { user });
       if (user && user.password_hash === hash(password)) {
         const { session_id } = user;
-        console.log('login sessionId', session_id);
         return setSession({ username, res, session_id });
       } else {
         const error = new Error('Incorrect username/password');

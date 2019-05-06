@@ -3,7 +3,6 @@ const UserTable = require('../../../user/table');
 const { hash } = require('../../../user/helper');
 
 const setSession = ({ username, res, session_id }) => {
-  console.log('setSession Check', { username, session_id });
   return new Promise((resolve, reject) => {
     let session, sessionString;
 
