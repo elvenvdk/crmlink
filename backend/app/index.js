@@ -19,7 +19,6 @@ app.use('/user', userRouter);
 
 app.use(errHandler);
 
-Zoho.generateZohoAuth();
-Zoho.refreshZohoAuth();
+Zoho.fetchRcords('deals');
 
 module.exports = app;

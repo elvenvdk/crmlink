@@ -1,9 +1,12 @@
 const modules = {
   LEADS: 'leads',
   CONTACTS: 'contacts',
-  CAMPAIGNS: 'campaains',
+  CAMPAIGNS: 'campaigns',
   DEALS: 'deals',
-  TASKS: 'tasks'
+  TASKS: 'tasks',
+  REFERRALS: 'referrals',
+  ACTIVITIES: 'activities',
+  ACCOUNTS: 'accounts'
 };
 
 module.exports = { modules };
