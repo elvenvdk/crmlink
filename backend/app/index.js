@@ -19,6 +19,6 @@ app.use('/user', userRouter);
 
 app.use(errHandler);
 
-Zoho.fetchRcords('deals');
+// Zoho.fetchRcords({ module: 'activities', id: '2354620000008692064' });
 
 module.exports = app;

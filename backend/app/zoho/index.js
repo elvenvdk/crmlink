@@ -23,136 +23,90 @@ const {
 } = modules;
 
 class Zoho {
-  static fetchRcords(module) {
-    Zoho.setAuthForm(module);
+  static fetchRcords({ module, id }) {
+    console.log(id ? 'fetchRecords' : 'no id yet');
+    Zoho.setAuthForm(module, id);
   }
 
-  static setAuthForm(module) {
+  static fetchFromAccount({ module, id, token, options }) {
+    console.log(id ? 'fetchFromAccount' : 'no id yet');
+    options = {
+      headers: {
+        Authorization: `Zoho-oauthtoken ${token}`
+      }
+    };
+    if (id) {
+      return fetch(`${REQ_URL}${module}/${id}`, options)
+        .then(res => res.json())
+        .then(json => console.log(json))
+        .catch(error => console.log(error));
+    } else {
+      return fetch(`${REQ_URL}${module}`, options)
+        .then(res => res.json())
+        .then(json => console.log(json))
+        .catch(error => console.log(error));
+    }
+  }
+
+  static setAuthForm(module, id) {
     for (let el in ZOHO_AUTH) {
       formData.append(el, ZOHO_AUTH[el]);
     }
-    return fetch(ZOHO_API_URI, {
-      method: 'POST',
-      body: formData,
-      credentials: 'omit'
-    })
-      .then(res => res.json())
-      .then(res => {
-        if (module === LEADS) Zoho.fetchLeads(res.access_token);
-        else if (module === DEALS) Zoho.fetchDeals(res.access_token);
-        else if (module === REFERRALS) Zoho.fetchReferrals(res.access_token);
-        else if (module === CONTACTS) Zoho.fetchContacts(res.access_token);
-        else if (module === CAMPAIGNS) Zoho.fetchCampaigns(res.access_token);
-        else if (module === TASKS) Zoho.fetchTasks(res.access_token);
-        else if (module === ACTIVITIES) Zoho.fetchActivities(res.access_token);
-        else if (module === ACCOUNTS) Zoho.fetchAccounts(res.access_token);
+    if (id) {
+      console.log('setAuthform... id', id);
+      return fetch(ZOHO_API_URI, {
+        method: 'POST',
+        body: formData,
+        credentials: 'omit'
       })
-      .catch(error => console.log(error));
+        .then(res => res.json())
+        .then(res => {
+          console.log('.then setAuthForm... id', id);
+          Zoho.fetchModuleRecord({
+            module: module,
+            token: res.access_token,
+            id: id
+          });
+        })
+        .catch(error => console.log(error));
+    } else {
+      return fetch(ZOHO_API_URI, {
+        method: 'POST',
+        body: formData,
+        credentials: 'omit'
+      })
+        .then(res => res.json())
+        .then(res => {
+          Zoho.fetchModuleRecords({
+            module: module,
+            token: res.access_token
+          });
+        })
+        .catch(error => console.log(error));
+    }
   }
 
-  // Leads
-  static fetchLeads(token) {
-    console.log('leads header...', token);
-    return fetch(`${REQ_URL}${LEADS}`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Zoho-oauthtoken ${token}`
+  static fetchModuleRecords({ module, token }) {
+    console.log('fetchModuleRecords... header...', token);
+    Zoho.fetchFromAccount({
+      module: module,
+      token: token,
+      options: {
+        method: 'GET'
       }
-    })
-      .then(res => res.json())
-      .then(json => console.log(json))
-      .catch(error => console.log(error));
+    });
   }
 
-  // Deals
-  static fetchDeals(token) {
-    console.log('deals header...', token);
-    return fetch(`${REQ_URL}${DEALS}`, {
-      headers: {
-        Authorization: `Zoho-oauthtoken ${token}`
+  static fetchModuleRecord({ module, id, token }) {
+    console.log('fetchModuleRecords... header...', token);
+    Zoho.fetchFromAccount({
+      module: module,
+      id: id,
+      token: token,
+      options: {
+        method: 'GET'
       }
-    })
-      .then(res => res.json())
-      .then(json => console.log(json))
-      .catch(error => console.log(error));
-  }
-
-  // Referrals
-  static fetchReferrals(token) {
-    console.log('referrals header...', token);
-    return fetch(`${REQ_URL}${REFERRALS}`, {
-      headers: {
-        Authorization: `Zoho-oauthtoken${token}`
-      }
-    })
-      .then(res => res.json())
-      .then(json => console.log(json))
-      .catch(error => console.log(error));
-  }
-
-  // Contacts
-  static fetchContacts(token) {
-    console.log('contacts header...', token);
-    return fetch(`${REQ_URL}${CONTACTS}`, {
-      headers: {
-        Authorization: `Zoho-oauthtoken${token}`
-      }
-    })
-      .then(res => res.json())
-      .then(json => console.log(json))
-      .catch(error => console.log(error));
-  }
-
-  // Referrals
-  static fetchCampaigns(token) {
-    console.log('campaigns header...', token);
-    return fetch(`${REQ_URL}${CAMPAIGNS}`, {
-      headers: {
-        Authorization: `Zoho-oauthtoken${token}`
-      }
-    })
-      .then(res => res.json())
-      .then(json => console.log(json))
-      .catch(error => console.log(error));
-  }
-
-  // Tasks
-  static fetchTasks(token) {
-    console.log('tasks header...', token);
-    return fetch(`${REQ_URL}${TASKS}`, {
-      headers: {
-        Authorization: `Zoho-oauthtoken${token}`
-      }
-    })
-      .then(res => res.json())
-      .then(json => console.log(json))
-      .catch(error => console.log(error));
-  }
-
-  // Activities
-  static fetchActivities(token) {
-    console.log('activities header...', token);
-    return fetch(`${REQ_URL}${ACTIVITIES}`, {
-      headers: {
-        Authorization: `Zoho-oauthtoken${token}`
-      }
-    })
-      .then(res => res.json())
-      .then(json => console.log(json))
-      .catch(error => console.log(error));
-  }
-
-  // Accounts
-  static fetchAccounts(token) {
-    console.log('accounts header...', token);
-    return fetch(`${REQ_URL}${ACCOUNTS}`, {
-      headers: {
-        Authorization: `Zoho-oauthtoken${token}`
-      }
-    })
-      .then(res => res.json())
-      .then(json => console.log(json))
-      .catch(error => console.log(error));
+    });
   }
 }
 
