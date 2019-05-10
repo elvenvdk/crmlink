@@ -20,6 +20,21 @@ app.use('/user', userRouter);
 app.use(errHandler);
 
 // Zoho.fetchRcords({ module: 'activities', id: '2354620000008692064' });
-// Zoho.fetchRcords({ module: 'activities' });
+// Zoho.fetchRcords({ module: 'contacts' });
+// Zoho.updateRecord({
+//   module: 'contacts',
+//   id: '2354620000009920001',
+//   body: {
+//     data: [
+//       {
+//         First_Name: 'Olafunke',
+//         Last_Name: 'Adeyemi',
+//         Email: 'olafunke.adeyemi@email.com',
+//         Description:
+//           'This was a test to see if I could create a record from the api...'
+//       }
+//     ]
+//   }
+// });
 
 module.exports = app;
