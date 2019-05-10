@@ -28,7 +28,11 @@ class Zoho {
     Zoho.setAuthForm(module, id);
   }
 
-  static fetchFromAccount({ module, id, token, options }) {
+  static createRecord({ module, data }) {
+    Zoho.setAuthForm({ module, data });
+  }
+
+  static fetchFromAccount({ module, id, data, token, options }) {
     console.log(id ? 'fetchFromAccount' : 'no id yet');
     options = {
       headers: {
@@ -48,42 +52,33 @@ class Zoho {
     }
   }
 
-  static setAuthForm(module, id) {
+  static setAuthForm(module, id, data) {
     for (let el in ZOHO_AUTH) {
       formData.append(el, ZOHO_AUTH[el]);
     }
-    if (id) {
-      console.log('setAuthform... id', id);
-      return fetch(ZOHO_API_URI, {
-        method: 'POST',
-        body: formData,
-        credentials: 'omit'
-      })
-        .then(res => res.json())
-        .then(res => {
-          console.log('.then setAuthForm... id', id);
+
+    return fetch(ZOHO_API_URI, {
+      method: 'POST',
+      body: formData,
+      credentials: 'omit'
+    })
+      .then(res => res.json())
+      .then(res => {
+        console.log('.then setAuthForm... id', id);
+        if (id) {
           Zoho.fetchModuleRecord({
             module: module,
             token: res.access_token,
             id: id
           });
-        })
-        .catch(error => console.log(error));
-    } else {
-      return fetch(ZOHO_API_URI, {
-        method: 'POST',
-        body: formData,
-        credentials: 'omit'
-      })
-        .then(res => res.json())
-        .then(res => {
+        } else {
           Zoho.fetchModuleRecords({
             module: module,
             token: res.access_token
           });
-        })
-        .catch(error => console.log(error));
-    }
+        }
+      })
+      .catch(error => console.log(error));
   }
 
   static fetchModuleRecords({ module, token }) {
