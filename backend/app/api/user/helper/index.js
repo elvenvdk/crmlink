@@ -52,7 +52,7 @@ const authenticatedUser = ({ sessionString }) => {
         .then(({ user }) => {
           const authenticated = user.session_id == id;
 
-          resolve({ account, authenticated });
+          resolve({ user, authenticated });
         })
         .catch(error => reject(error));
     }
