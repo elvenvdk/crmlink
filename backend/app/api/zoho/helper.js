@@ -161,7 +161,8 @@ const authenticate = () => {
           }
         }
       );
-    });
+    })
+    .catch(error => console.log(error.message));
 };
 
 const authenticated = () => on;
@@ -183,32 +184,14 @@ const stopRefreshAuth = () => {
 };
 
 const getAccessToken = () => {
-  console.log(on);
-  // if (on) {
-  //   return new Promise((resolve, reject) => {
-  //     pool.query('SELECT * FROM zoho_session', (error, response) => {
-  //       if (error) {
-  //         return reject(error.message);
-  //       } else if (response.rows[0] !== undefined) {
-  //         resolve(response.rows[0].session_id);
-  //       } else {
-  //         console.log('shit...');
-  //       }
-  //     });
-  //   });
-  // } else {
-  //   console.log('UserError: ...User not logged in');
-  // }
-
+  console.log('Acquiring Access Token...');
   return new Promise((resolve, reject) => {
     pool.query('SELECT * FROM zoho_session', (error, response) => {
+      console.log('Attempting to authorize...');
       if (error) {
-        return reject(error.message);
-      } else if (response.rows[0] !== undefined) {
-        resolve(response.rows[0].session_id);
-      } else {
-        console.log('shit...');
+        return reject(new Error({ message: error.message }));
       }
+      resolve(response.rows[0].session_id);
     });
   });
 };
