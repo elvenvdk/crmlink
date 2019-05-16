@@ -2,6 +2,11 @@ const { Router } = require('express');
 const UserTable = require('../../user/table');
 const Session = require('../../user/session');
 const { setSession, authenticatedUser } = require('./helper');
+const {
+  authenticate,
+  refreshAuth,
+  stopRefreshAuth
+} = require('../zoho/helper');
 const { hash } = require('../../user/helper');
 
 const router = Router();
@@ -38,6 +43,8 @@ router.post('/login', (req, res, next) => {
     .then(({ user }) => {
       if (user && user.password_hash === hash(password)) {
         const { session_id } = user;
+        authenticate();
+        refreshAuth();
         return setSession({ username, res, session_id });
       } else {
         const error = new Error('Incorrect username/password');
@@ -51,6 +58,7 @@ router.post('/login', (req, res, next) => {
 
 // Logout
 router.get('/logout', (req, res, next) => {
+  stopRefreshAuth();
   const { username } = Session.parse(req.cookies.sessionString);
 
   UserTable.updateSessionId({

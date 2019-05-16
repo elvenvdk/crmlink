@@ -2,13 +2,15 @@ const { Router } = require('express');
 const fetch = require('isomorphic-fetch');
 
 const { authenticatedUser } = require('../user/helper');
-const { getAccessToken, REQ_URL, modules } = require('./helper');
-const router = new Router();
-const IDsEqual = '?ids=';
+const { modules } = require('./helper');
+const { getAccessToken, REQ_URL } = require('./helper');
 
-const { LEADS } = modules;
+const router = Router();
+const IDisEqual = '?ids=';
 
-// Leads
+const { CONTACTS } = modules;
+
+// Contacts
 router.get('/', (req, res, next) => {
   let token;
   getAccessToken()
@@ -18,7 +20,7 @@ router.get('/', (req, res, next) => {
     .catch(error => next(error));
   authenticatedUser({ sessionString: req.cookies.sessionString })
     .then(() => {
-      fetch(`${REQ_URL}${LEADS}`, {
+      fetch(`${REQ_URL}${CONTACTS}`, {
         headers: {
           Authorization: `Zoho-oauthtoken ${token}`
         }
@@ -32,16 +34,18 @@ router.get('/', (req, res, next) => {
     .catch(error => next(error));
 });
 
-// Specific Lead
+// Specific Contact
 router.get('/:id', (req, res, next) => {
-  let token;
   const { id } = req.params;
-  getAccessToken().then(data => {
-    token = data;
-  });
+  let token;
+  getAccessToken()
+    .then(data => {
+      token = data;
+    })
+    .catch(error => next(error));
   authenticatedUser({ sessionString: req.cookies.sessionString })
     .then(() => {
-      fetch(`${REQ_URL}${LEADS}/${id}`, {
+      fetch(`${REQ_URL}${CONTACTS}/${id}`, {
         headers: {
           Authorization: `Zoho-oauthtoken ${token}`
         }
@@ -50,16 +54,12 @@ router.get('/:id', (req, res, next) => {
         .then(json => res.send(json))
         .catch(error => {
           throw error;
-        })
-
-        .catch(error => {
-          throw error;
         });
     })
     .catch(error => next(error));
 });
 
-// Create lead
+// Create Contact
 router.post('/create', (req, res, next) => {
   const {
     Last_Name,
@@ -77,9 +77,7 @@ router.post('/create', (req, res, next) => {
     .catch(error => next(error));
   authenticatedUser({ sessionString: req.cookies.sessionString })
     .then(() => {
-      req.body = newLeadForm;
-      console.log('newLeadForm', newLeadForm);
-      fetch(`${REQ_URL}${LEADS}`, {
+      fetch(`${REQ_URL}${CONTACTS}`, {
         method: 'POST',
         headers: {
           Authorization: `Zoho-oauthtoken ${token}`
@@ -109,7 +107,7 @@ router.post('/create', (req, res, next) => {
     .catch(error => next(error));
 });
 
-// Update lead
+// Update Contact
 router.put('/:id', (req, res, next) => {
   const { id } = req.params;
   const {
@@ -127,9 +125,7 @@ router.put('/:id', (req, res, next) => {
   });
   authenticatedUser({ sessionString: req.cookies.sessionString })
     .then(() => {
-      req.body = newLeadForm;
-      console.log('newLeadForm', newLeadForm);
-      fetch(`${REQ_URL}${LEADS}`, {
+      fetch(`${REQ_URL}${CONTACTS}`, {
         method: 'PUT',
         headers: {
           Authorization: `Zoho-oauthtoken ${token}`
@@ -137,6 +133,7 @@ router.put('/:id', (req, res, next) => {
         body: JSON.stringify({
           data: [
             {
+              id,
               Last_Name,
               Title,
               Email,

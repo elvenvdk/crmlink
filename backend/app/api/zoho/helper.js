@@ -6,8 +6,9 @@ const formData = new FormData();
 
 const ZOHO_API_DOMAIN = 'https://accounts.zoho.com';
 const ZOHO_API_URI = `${ZOHO_API_DOMAIN}/oauth/v2/token`;
-const date = new Date();
+const REQ_URL = 'https://www.zohoapis.com/crm/v2/';
 
+const date = new Date();
 const newLeadForm = {
   Which_membership_club_s_if_applicable: null,
   Owner: {
@@ -109,8 +110,31 @@ const modules = {
   ACCOUNTS: 'accounts'
 };
 
+const REFRESH_TIME = 3300000;
+
+const getTimeStr = () => {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const monthZero = month < 10 ? '0' : '';
+  const day = date.getDate();
+  const dayZero = day < 10 ? '0' : '';
+  const hrs = date.getHours();
+  const hrsZero = hrs < 10 ? '0' : '';
+  const mins = date.getMinutes();
+  const minsZero = mins < 10 ? '0' : '';
+  const secs = date.getSeconds();
+  const secsZero = secs < 10 ? '0' : '';
+  const milliSecs = date.getMilliseconds();
+  const timeStr = `${year}-${monthZero}${month}${dayZero}-${day} ${hrsZero}${hrs}:${minsZero}${mins}:${secsZero}${secs}.${milliSecs}`;
+  return timeStr;
+};
+
+let on = false;
+
 // Main authentication
-const authenicate = () => {
+const authenticate = () => {
+  on = true;
   console.log('authenicating');
   for (let el in ZOHO_AUTH) {
     formData.append(el, ZOHO_AUTH[el]);
@@ -122,7 +146,7 @@ const authenicate = () => {
   })
     .then(data => data.json())
     .then(data => {
-      console.log('GETTING ACCESS TOKEN', data.access_token);
+      // console.log('GETTING ACCESS TOKEN', data.access_token);
       pool.query('DELETE FROM zoho_session', (error, response) => {
         if (error) {
           throw error;
@@ -140,13 +164,62 @@ const authenicate = () => {
     });
 };
 
+const authenticated = () => on;
+
+let timer;
+
+const refreshAuth = () => {
+  console.log('Starting AuthToken refresh...');
+  let time = 0;
+  timer = setInterval(() => {
+    console.log('Refreshing AuthToken - Refresh No: ', time++);
+    authenticate();
+  }, REFRESH_TIME);
+};
+
+const stopRefreshAuth = () => {
+  console.log('Refresh AuthToken Stopped');
+  clearInterval(timer);
+};
+
 const getAccessToken = () => {
+  console.log(on);
+  // if (on) {
+  //   return new Promise((resolve, reject) => {
+  //     pool.query('SELECT * FROM zoho_session', (error, response) => {
+  //       if (error) {
+  //         return reject(error.message);
+  //       } else if (response.rows[0] !== undefined) {
+  //         resolve(response.rows[0].session_id);
+  //       } else {
+  //         console.log('shit...');
+  //       }
+  //     });
+  //   });
+  // } else {
+  //   console.log('UserError: ...User not logged in');
+  // }
+
   return new Promise((resolve, reject) => {
     pool.query('SELECT * FROM zoho_session', (error, response) => {
-      if (error) return reject(error);
-      resolve(response.rows[0].session_id);
+      if (error) {
+        return reject(error.message);
+      } else if (response.rows[0] !== undefined) {
+        resolve(response.rows[0].session_id);
+      } else {
+        console.log('shit...');
+      }
     });
   });
 };
 
-module.exports = { newLeadForm, authenicate, getAccessToken };
+module.exports = {
+  authenticate,
+  authenticated,
+  getAccessToken,
+  newLeadForm,
+  modules,
+  refreshAuth,
+  stopRefreshAuth,
+  REQ_URL
+};

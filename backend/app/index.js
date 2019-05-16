@@ -4,7 +4,12 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const { errHandler } = require('./helper');
-const Zoho = require('./zoho');
+const {
+  authenticate,
+  refreshAuth,
+  stopRefreshAuth,
+  authenticated
+} = require('./api/zoho/helper');
 
 const routes = require('./api');
 
@@ -18,6 +23,9 @@ app.use(cookieParser());
 app.use('/', routes);
 
 app.use(errHandler);
+
+// authenticate();
+// console.log('authenticated() from index', authenticated());
 
 // Zoho.fetchRcords({
 //   module: 'activities',

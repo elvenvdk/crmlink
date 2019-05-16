@@ -9,7 +9,7 @@ const router = Router();
 router.use(bodyParser.json());
 router.use(cookieParser());
 
-router.use('user', user);
+router.use('/user', user);
 router.use('/zo', zoho);
 
 module.exports = router;
