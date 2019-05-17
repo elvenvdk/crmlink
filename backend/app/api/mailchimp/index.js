@@ -4,15 +4,17 @@ const cookieParser = require('cookie-parser');
 
 const reports = require('./reports');
 const campaigns = require('./campaigns');
+const audience = require('./audience');
 
 const router = Router();
+
+// MAILCHIMP
 
 router.use(bodyParser.json());
 router.use(cookieParser());
 
 router.use('/reports', reports);
 router.use('/campaigns', campaigns);
-
-// MAILCHIMP
+router.use('/audience', audience);
 
 module.exports = router;

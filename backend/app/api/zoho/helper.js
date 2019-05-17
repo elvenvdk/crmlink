@@ -135,7 +135,7 @@ let on = false;
 // Main authentication
 const authenticate = () => {
   on = true;
-  console.log('authenicating');
+  console.log('authenicating at: ', getTimeStr());
   for (let el in ZOHO_AUTH) {
     formData.append(el, ZOHO_AUTH[el]);
   }
@@ -170,21 +170,21 @@ const authenticated = () => on;
 let timer;
 
 const refreshAuth = () => {
-  console.log('Starting AuthToken refresh...');
-  let time = 0;
+  console.log('Starting AuthToken refresh...', getTimeStr());
+  let time = 1;
   timer = setInterval(() => {
-    console.log('Refreshing AuthToken - Refresh No: ', time++);
+    console.log('Refreshing AuthToken - Refresh No: ', time++, getTimeStr());
     authenticate();
   }, REFRESH_TIME);
 };
 
 const stopRefreshAuth = () => {
-  console.log('Refresh AuthToken Stopped');
+  console.log('Refresh AuthToken Stopped', getTimeStr());
   clearInterval(timer);
 };
 
 const getAccessToken = () => {
-  console.log('Acquiring Access Token...');
+  console.log('Acquiring Access Token...', getTimeStr());
   return new Promise((resolve, reject) => {
     pool.query('SELECT * FROM zoho_session', (error, response) => {
       console.log('Attempting to authorize...');
