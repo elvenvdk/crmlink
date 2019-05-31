@@ -83,4 +83,41 @@ router.get('/members/:id/:memberId', (req, res, next) => {
     .catch(error => next(error));
 });
 
+// Create List Member
+router.post('/members/:id', (req, res, next) => {
+  const { id } = req.params;
+  const {
+    email_address,
+    first_name,
+    last_name,
+    status,
+    company,
+    current_city,
+    how_did_you_hear_about_us
+  } = req.body;
+  authenticatedUser({ sessionString: req.cookies.sessionString })
+    .then(() => {
+      fetch(`${REQ_URL}/${id}/members`, {
+        headers: {
+          method: 'POST',
+          Authorization: MAILCHIMPAUTHTOKEN,
+          body: JSON.stringify({
+            email_address,
+            first_name,
+            last_name,
+            status,
+            company,
+            current_city,
+            how_did_you_hear_about_us
+          })
+        }
+      })
+        .then(() => res.send({ message: 'Create Contact Successfull' }))
+        .catch(error => {
+          throw error;
+        });
+    })
+    .catch(error => next(error));
+});
+
 module.exports = router;

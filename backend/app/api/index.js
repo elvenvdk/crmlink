@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const user = require('./user');
 const zoho = require('./zoho');
 const mailchimp = require('./mailchimp');
+const members = require('./member');
 
 const router = Router();
 
@@ -16,5 +17,7 @@ router.use('/user', user);
 router.use('/machi', mailchimp);
 // zoho routes
 router.use('/zo', zoho);
+// anoko members
+router.use('/members', members);
 
 module.exports = router;
